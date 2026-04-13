@@ -1,7 +1,8 @@
 'use client'
 
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
+import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 
 // Custom shader for realistic sun surface
@@ -170,6 +171,7 @@ const coronaFragmentShader = `
 export function Sun() {
   const sunRef = useRef<THREE.Mesh>(null)
   const coronaRef = useRef<THREE.Mesh>(null)
+  const [isHovered, setIsHovered] = useState(false)
   
   const sunMaterial = useMemo(() => {
     return new THREE.ShaderMaterial({
@@ -215,9 +217,29 @@ export function Sun() {
   return (
     <group position={[0, 0, 0]}>
       {/* Main sun sphere with realistic shader */}
-      <mesh ref={sunRef} material={sunMaterial}>
+      <mesh 
+        ref={sunRef} 
+        material={sunMaterial}
+        onPointerEnter={() => setIsHovered(true)}
+        onPointerLeave={() => setIsHovered(false)}
+      >
         <sphereGeometry args={[sunRadius, 128, 128]} />
       </mesh>
+
+      {/* Hover tooltip */}
+      {isHovered && (
+        <Html
+          position={[0, sunRadius + 15, 0]}
+          center
+          style={{ pointerEvents: 'none' }}
+        >
+          <div className="animate-in fade-in zoom-in-95 duration-200 rounded-xl border border-amber-500/30 bg-gradient-to-br from-amber-950/90 to-orange-950/90 px-5 py-3 shadow-lg shadow-orange-500/20 backdrop-blur-md">
+            <p className="whitespace-nowrap text-base font-medium text-amber-100">
+              Hello, I&apos;m Sun.
+            </p>
+          </div>
+        </Html>
+      )}
       
       {/* Corona / outer atmosphere */}
       <mesh ref={coronaRef} material={coronaMaterial}>
