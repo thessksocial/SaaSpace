@@ -1,11 +1,10 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import { SearchBar } from '@/components/ui/search-bar'
 import { ProductModal } from '@/components/ui/product-modal'
-import { CategoryFilter } from '@/components/ui/category-filter'
 import { saasProducts, type SaaSProduct } from '@/lib/saas-data'
 
 // Dynamic import for SpaceScene to avoid SSR issues with Three.js
@@ -18,19 +17,8 @@ export default function SaaSpacePage() {
   const [selectedProduct, setSelectedProduct] = useState<SaaSProduct | null>(null)
   const [highlightedProductId, setHighlightedProductId] = useState<string | null>(null)
   const [targetPosition, setTargetPosition] = useState<[number, number, number] | null>(null)
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
-  // Get unique categories
-  const categories = useMemo(() => {
-    const cats = [...new Set(saasProducts.map(p => p.category))]
-    return cats.sort()
-  }, [])
-
-  // Count filtered products
-  const filteredCount = useMemo(() => {
-    if (!selectedCategory) return saasProducts.length
-    return saasProducts.filter(p => p.category === selectedCategory).length
-  }, [selectedCategory])
+  const productCount = saasProducts.length
 
   const handleSearch = useCallback(
     (product: SaaSProduct) => {
@@ -53,12 +41,6 @@ export default function SaaSpacePage() {
     setSelectedProduct(null)
   }, [])
 
-  const handleSelectCategory = useCallback((category: string | null) => {
-    setSelectedCategory(category)
-    setHighlightedProductId(null)
-    setTargetPosition(null)
-  }, [])
-
   return (
     <main className="relative h-screen w-full overflow-hidden bg-background">
       {/* 3D Space Scene */}
@@ -66,7 +48,6 @@ export default function SaaSpacePage() {
         onSelectProduct={handleSelectProduct}
         highlightedProductId={highlightedProductId}
         targetPosition={targetPosition}
-        selectedCategory={selectedCategory}
       />
 
       {/* UI Overlay */}
@@ -87,24 +68,9 @@ export default function SaaSpacePage() {
             Explore the universe of SaaS products
           </p>
 
-          <div className="pointer-events-auto w-full max-w-md mb-4">
+          <div className="pointer-events-auto w-full max-w-md">
             <SearchBar onSearch={handleSearch} onClear={handleClearSearch} />
           </div>
-
-          {/* Category Filter */}
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="pointer-events-auto overflow-x-auto max-w-full pb-2 scrollbar-hide"
-          >
-            <CategoryFilter
-              categories={categories}
-              selectedCategory={selectedCategory}
-              onSelectCategory={handleSelectCategory}
-              visibleCount={7}
-            />
-          </motion.div>
         </motion.header>
 
         {/* Instructions */}
@@ -130,8 +96,7 @@ export default function SaaSpacePage() {
         >
           <div className="rounded-xl border border-border/50 bg-popover/60 px-4 py-3 backdrop-blur-sm">
             <p className="text-xs text-muted-foreground">
-              <span className="font-semibold text-foreground">{filteredCount}</span>
-              {selectedCategory ? ` ${selectedCategory}` : ''} SaaS planets
+              <span className="font-semibold text-foreground">{productCount}</span> SaaS planets
             </p>
           </div>
         </motion.div>

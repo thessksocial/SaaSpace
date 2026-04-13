@@ -13,7 +13,6 @@ interface SpaceSceneProps {
   onSelectProduct: (product: SaaSProduct) => void
   highlightedProductId?: string | null
   targetPosition?: [number, number, number] | null
-  selectedCategory?: string | null
 }
 
 // Generate orbit parameters for each planet
@@ -88,15 +87,9 @@ export function getPlanetPosition(productId: string, time: number = 0): [number,
 export function SpaceScene({ 
   onSelectProduct, 
   highlightedProductId, 
-  targetPosition,
-  selectedCategory 
+  targetPosition
 }: SpaceSceneProps) {
   const orbitParameters = useMemo(() => generateOrbitParameters(saasProducts), [])
-
-  const filteredProducts = useMemo(() => {
-    if (!selectedCategory) return saasProducts
-    return saasProducts.filter(p => p.category === selectedCategory)
-  }, [selectedCategory])
 
   return (
     <div className="h-screen w-full">
@@ -119,7 +112,6 @@ export function SpaceScene({
           {/* Orbiting Planets */}
           {saasProducts.map((product) => {
             const params = orbitParameters[product.id]
-            const isFiltered = !selectedCategory || product.category === selectedCategory
             
             return (
               <Planet
@@ -131,7 +123,6 @@ export function SpaceScene({
                 verticalOffset={params.verticalOffset}
                 onClick={onSelectProduct}
                 isHighlighted={highlightedProductId === product.id}
-                isFiltered={isFiltered}
               />
             )
           })}
