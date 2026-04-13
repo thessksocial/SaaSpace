@@ -38,12 +38,12 @@ function generateOrbitParameters(products: SaaSProduct[]) {
     const countInCategory = categoryCount[product.category]
     categoryCount[product.category] = countInCategory + 1
 
-    // Base orbit radius - MUCH more spread out by category
-    // Start from 30 units and add 25 units spacing for each category tier
-    const categoryRadius = 30 + catIdx * 25
+    // Base orbit radius - Start beyond the sun (sun radius is 50)
+    // Start from 80 units and add 30 units spacing for each category tier
+    const categoryRadius = 80 + catIdx * 30
     
     // Within category, spread products along the orbit with significant radii variation
-    const radiusVariation = (countInCategory % 5 - 2) * 8
+    const radiusVariation = (countInCategory % 5 - 2) * 10
     const orbitRadius = categoryRadius + radiusVariation
 
     // Different speeds for more dynamic feel - outer orbits move slower
@@ -94,7 +94,7 @@ export function SpaceScene({
   return (
     <div className="h-screen w-full">
       <Canvas
-        camera={{ position: [0, 60, 180], fov: 60 }}
+        camera={{ position: [0, 100, 280], fov: 60 }}
         gl={{ antialias: true, alpha: false }}
         style={{ background: '#020205' }}
       >
