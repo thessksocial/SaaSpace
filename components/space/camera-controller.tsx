@@ -60,11 +60,11 @@ export function CameraController({ targetPosition, autoRotate = true }: CameraCo
       enablePan={false}
       enableZoom={true}
       minDistance={5}
-      maxDistance={40}
+      maxDistance={800}
       autoRotate={autoRotate && !isAnimating.current}
       autoRotateSpeed={0.3}
       rotateSpeed={0.5}
-      zoomSpeed={0.8}
+      zoomSpeed={1.5}
       enableDamping
       dampingFactor={0.05}
     />

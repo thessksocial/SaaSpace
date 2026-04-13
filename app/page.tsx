@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import { SearchBar } from '@/components/ui/search-bar'
 import { ProductModal } from '@/components/ui/product-modal'
+import { AudioPlayer } from '@/components/ui/audio-player'
 import { saasProducts, type SaaSProduct } from '@/lib/saas-data'
 
 // Dynamic import for SpaceScene to avoid SSR issues with Three.js
@@ -13,56 +14,19 @@ const SpaceScene = dynamic(
   { ssr: false }
 )
 
-// Generate positions for planets (same logic as in space-scene)
-function generatePlanetPositions(products: SaaSProduct[]) {
-  const categories = [...new Set(products.map((p) => p.category))]
-  const categoryAngles: Record<string, number> = {}
-
-  categories.forEach((cat, i) => {
-    categoryAngles[cat] = (i / categories.length) * Math.PI * 2
-  })
-
-  const positions: Record<string, [number, number, number]> = {}
-  const categoryCount: Record<string, number> = {}
-
-  products.forEach((product) => {
-    const categoryAngle = categoryAngles[product.category]
-    const count = categoryCount[product.category] || 0
-    categoryCount[product.category] = count + 1
-
-    const angleOffset = count * 0.4 - ((categoryCount[product.category] || 1) * 0.2)
-    const angle = categoryAngle + angleOffset
-
-    const baseDistance = 8 + count * 2
-    const distance =
-      baseDistance + (product.size === 'large' ? -1 : product.size === 'small' ? 1 : 0)
-
-    const x = Math.cos(angle) * distance
-    const z = Math.sin(angle) * distance
-    const y = (Math.random() - 0.5) * 4
-
-    positions[product.id] = [x, y, z]
-  })
-
-  return positions
-}
-
 export default function SaaSpacePage() {
   const [selectedProduct, setSelectedProduct] = useState<SaaSProduct | null>(null)
   const [highlightedProductId, setHighlightedProductId] = useState<string | null>(null)
   const [targetPosition, setTargetPosition] = useState<[number, number, number] | null>(null)
 
-  const planetPositions = useMemo(() => generatePlanetPositions(saasProducts), [])
+  const productCount = saasProducts.length
 
   const handleSearch = useCallback(
     (product: SaaSProduct) => {
       setHighlightedProductId(product.id)
-      const position = planetPositions[product.id]
-      if (position) {
-        setTargetPosition(position)
-      }
+      // Note: Position will be calculated dynamically based on current orbit
     },
-    [planetPositions]
+    []
   )
 
   const handleClearSearch = useCallback(() => {
@@ -94,14 +58,14 @@ export default function SaaSpacePage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-col items-center px-6 pt-8"
+          className="flex flex-col items-center px-6 pt-6"
         >
-          <h1 className="mb-2 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+          <h1 className="mb-1 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+            <span className="bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 bg-clip-text text-transparent">
               SaaSpace
             </span>
           </h1>
-          <p className="mb-6 text-sm text-muted-foreground md:text-base">
+          <p className="mb-4 text-sm text-muted-foreground">
             Explore the universe of SaaS products
           </p>
 
@@ -129,12 +93,11 @@ export default function SaaSpacePage() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="absolute right-6 top-8 hidden md:block"
+          className="absolute right-6 top-6 hidden md:block"
         >
           <div className="rounded-xl border border-border/50 bg-popover/60 px-4 py-3 backdrop-blur-sm">
             <p className="text-xs text-muted-foreground">
-              <span className="font-semibold text-foreground">{saasProducts.length}</span> SaaS
-              planets
+              <span className="font-semibold text-foreground">{productCount}</span> SaaS planets
             </p>
           </div>
         </motion.div>
@@ -142,6 +105,9 @@ export default function SaaSpacePage() {
 
       {/* Product Modal */}
       <ProductModal product={selectedProduct} onClose={handleCloseModal} />
+
+      {/* Space Music Player */}
+      <AudioPlayer />
     </main>
   )
 }

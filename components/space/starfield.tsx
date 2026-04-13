@@ -91,11 +91,11 @@ export function SpaceDust({ count = 200 }: { count?: number }) {
     const sizes = new Float32Array(count)
 
     for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 50
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 50
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 50
+      positions[i * 3] = (Math.random() - 0.5) * 400
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 150
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 400
 
-      sizes[i] = Math.random() * 0.5 + 0.1
+      sizes[i] = Math.random() * 0.8 + 0.2
     }
 
     return [positions, sizes]
