@@ -1,35 +1,70 @@
-# SaaSpace
+# 🌌 SaaSpace
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+**Explore SaaS like a universe. Not a list.**
 
-## Built with v0
+SaaSpace is a fun, experimental project where SaaS products are visualized as planets in an infinite 3D space.
+Instead of scrolling boring directories, you *navigate*, *rotate*, and *discover* tools in a fully interactive environment.
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
+---
 
-[Continue working on v0 →](https://v0.app/chat/projects/prj_ElVVT4tuZPmltpqkCG0Q7CmpkN8E)
+## 🚀 What it does
 
-## Getting Started
+* 🌍 Each SaaS = a planet
+* 🎮 360° camera rotation (move, zoom, explore)
+* 🌌 Infinite space environment with smooth motion
+* 🔍 Search and jump directly to tools
+* ✨ Visual-first discovery instead of lists
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+## 🧠 Why I built this
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Most SaaS directories feel like spreadsheets.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+I wanted to experiment with:
 
-## Learn More
+* A **new interface for discovery**
+* Making browsing feel like **exploration**
+* Turning a boring use-case into something **fun and immersive**
 
-To learn more, take a look at the following resources:
+This is not a “serious” product (yet) — it’s a **vibe-coded experiment**.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+---
 
-<a href="https://v0.app/chat/api/kiro/clone/thessksocial/SaaSpace" alt="Open in Kiro"><img src="https://pdgvvgmkdvyeydso.public.blob.vercel-storage.com/open%20in%20kiro.svg?sanitize=true" /></a>
+## 🛠 Built with
+
+* ⚡ v0 (for rapid UI + idea prototyping)
+* ▲ Vercel (deployment)
+* 🎨 Three.js / Web-based 3D concepts
+* 🧠 Pure curiosity + experimentation
+
+---
+
+## 🔗 Live Demo
+
+👉 https://v0-saaspace.vercel.app
+
+---
+
+## ⚠️ Status
+
+* MVP / Experimental
+* Desktop-first experience
+* Still evolving (more planets, smoother interactions coming)
+
+---
+
+## 💭 What’s next
+
+* Better planet interactions
+* More SaaS tools & categories
+* Improved performance
+* Possibly turning this into something bigger
+
+---
+
+## 🧨 Final Thought
+
+> What if discovering tools felt like exploring space?
+
+That’s SaaSpace.
