@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import { SearchBar } from '@/components/ui/search-bar'
 import { ProductModal } from '@/components/ui/product-modal'
+import { AudioPlayer } from '@/components/ui/audio-player'
 import { saasProducts, type SaaSProduct } from '@/lib/saas-data'
 
 // Dynamic import for SpaceScene to avoid SSR issues with Three.js
@@ -104,6 +105,9 @@ export default function SaaSpacePage() {
 
       {/* Product Modal */}
       <ProductModal product={selectedProduct} onClose={handleCloseModal} />
+
+      {/* Space Music Player */}
+      <AudioPlayer />
     </main>
   )
 }
