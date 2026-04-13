@@ -4,8 +4,8 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Volume2, VolumeX, Play, Pause } from 'lucide-react'
 
-// NASA's Juno Ganymede Flyby - Radio emissions from Jupiter's moon
-const SPACE_AUDIO_URL = 'https://www.nasa.gov/wp-content/uploads/2021/12/juno-ganymede-flyby-audioclip.mp3'
+// Space ambient music - royalty-free
+const SPACE_AUDIO_URL = 'https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3'
 
 export function AudioPlayer() {
   const [isPlaying, setIsPlaying] = useState(false)
