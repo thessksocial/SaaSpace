@@ -39,27 +39,26 @@ function generateOrbitParameters(products: SaaSProduct[]) {
     const countInCategory = categoryCount[product.category]
     categoryCount[product.category] = countInCategory + 1
 
-    // Base orbit radius - spread out more by category
-    // Start from 12 units and add spacing for each category
-    const categoryRadius = 14 + catIdx * 6
+    // Base orbit radius - MUCH more spread out by category
+    // Start from 30 units and add 25 units spacing for each category tier
+    const categoryRadius = 30 + catIdx * 25
     
-    // Within category, spread products along the orbit with different radii
-    const radiusVariation = (countInCategory % 3 - 1) * 2.5
+    // Within category, spread products along the orbit with significant radii variation
+    const radiusVariation = (countInCategory % 5 - 2) * 8
     const orbitRadius = categoryRadius + radiusVariation
 
     // Different speeds for more dynamic feel - outer orbits move slower
-    const baseSpeed = 0.08 / (1 + catIdx * 0.15)
-    const speedVariation = (Math.random() - 0.5) * 0.02
+    const baseSpeed = 0.04 / (1 + catIdx * 0.12)
+    const speedVariation = (Math.random() - 0.5) * 0.01
     const orbitSpeed = baseSpeed + speedVariation
 
-    // Distribute initial angles within the category sector
-    const sectorAngle = (Math.PI * 2) / categories.length
-    const categoryStartAngle = catIdx * sectorAngle
-    const angleInSector = (countInCategory / 15) * sectorAngle * 0.8
-    const initialAngle = categoryStartAngle + angleInSector + Math.random() * 0.3
+    // Distribute initial angles - full 360 degrees with unique spacing per product
+    const goldenAngle = Math.PI * (3 - Math.sqrt(5)) // Golden angle for even distribution
+    const globalIndex = Object.keys(parameters).length
+    const initialAngle = globalIndex * goldenAngle + catIdx * 0.5
 
-    // Vertical distribution
-    const verticalOffset = (Math.random() - 0.5) * 6
+    // Vertical distribution - more spread out
+    const verticalOffset = (Math.random() - 0.5) * 15
 
     parameters[product.id] = {
       orbitRadius,
@@ -102,7 +101,7 @@ export function SpaceScene({
   return (
     <div className="h-screen w-full">
       <Canvas
-        camera={{ position: [0, 15, 50], fov: 55 }}
+        camera={{ position: [0, 60, 180], fov: 60 }}
         gl={{ antialias: true, alpha: false }}
         style={{ background: '#020205' }}
       >
@@ -111,8 +110,8 @@ export function SpaceScene({
           <ambientLight intensity={0.15} />
 
           {/* Background elements */}
-          <Starfield count={8000} radius={150} />
-          <SpaceDust count={400} />
+          <Starfield count={12000} radius={600} />
+          <SpaceDust count={800} />
 
           {/* Central Sun */}
           <Sun />
