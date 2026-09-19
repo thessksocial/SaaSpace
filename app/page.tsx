@@ -60,13 +60,13 @@ export default function SaaSpacePage() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="flex flex-col items-center px-6 pt-6"
         >
-          <h1 className="mb-1 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-            <span className="bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400 bg-clip-text text-transparent">
+          <h1 className="mb-1 text-5xl font-black tracking-[-0.06em] drop-shadow-[0_0_24px_rgba(251,146,60,0.35)] md:text-7xl">
+            <span className="bg-gradient-to-r from-amber-300 via-orange-500 to-amber-300 bg-clip-text text-transparent">
               SaaSpace
             </span>
           </h1>
-          <p className="mb-4 text-sm text-muted-foreground">
-            Explore the universe of SaaS products
+          <p className="mb-5 text-sm font-medium tracking-[0.22em] text-amber-100/70 uppercase">
+            The universe of SaaS
           </p>
 
           <div className="pointer-events-auto w-full max-w-md">

@@ -211,8 +211,8 @@ export function Sun() {
     }
   })
 
-  // Sun radius - 100x bigger than planets (planets are ~0.3-0.8, so sun is 50)
-  const sunRadius = 50
+  // A dominant but readable sun at the initial camera distance.
+  const sunRadius = 28
 
   return (
     <group position={[0, 0, 0]}>

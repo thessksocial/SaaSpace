@@ -34,11 +34,11 @@ export function Planet({
   const [hovered, setHovered] = useState(false)
   const angleRef = useRef(initialAngle)
 
-  // Keep the size tiers visibly distinct so the largest SaaS worlds stand out.
+  // Comfortable proportions at the initial camera distance.
   const sizeMap = {
-    small: 1.2,
-    medium: 2,
-    large: 3.2
+    small: 0.8,
+    medium: 1.35,
+    large: 2.2
   }
 
   const baseSize = sizeMap[product.size]
@@ -120,13 +120,30 @@ export function Planet({
         }}
       >
         <sphereGeometry args={[baseSize, 64, 64]} />
-        <meshStandardMaterial
+        <meshPhysicalMaterial
           color={color}
           emissive={color}
-          emissiveIntensity={hovered || isHighlighted ? 0.6 : 0.25}
-          roughness={0.25}
-          metalness={0.75}
+          emissiveIntensity={hovered || isHighlighted ? 0.45 : 0.12}
+          roughness={0.42}
+          metalness={0.18}
+          clearcoat={0.5}
+          clearcoatRoughness={0.22}
+          sheen={0.35}
+          sheenColor={glowColor}
         />
+
+        {/* A soft atmospheric shell adds depth beyond a flat color. */}
+        <mesh scale={1.035}>
+          <sphereGeometry args={[baseSize, 48, 48]} />
+          <meshBasicMaterial
+            color={glowColor}
+            transparent
+            opacity={hovered || isHighlighted ? 0.14 : 0.06}
+            blending={THREE.AdditiveBlending}
+            side={THREE.BackSide}
+            depthWrite={false}
+          />
+        </mesh>
 
         {/* Tooltip on hover */}
         {hovered && (
