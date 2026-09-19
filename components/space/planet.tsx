@@ -34,10 +34,11 @@ export function Planet({
   const [hovered, setHovered] = useState(false)
   const angleRef = useRef(initialAngle)
 
+  // Keep the size tiers visibly distinct so the largest SaaS worlds stand out.
   const sizeMap = {
-    small: 0.5,
-    medium: 0.8,
-    large: 1.1
+    small: 1.2,
+    medium: 2,
+    large: 3.2
   }
 
   const baseSize = sizeMap[product.size]
