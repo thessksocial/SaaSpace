@@ -5,6 +5,7 @@ import { Canvas } from '@react-three/fiber'
 import { Preload } from '@react-three/drei'
 import { Starfield, SpaceDust } from './starfield'
 import { Planet } from './planet'
+import { Sun } from './sun'
 import { CameraController } from './camera-controller'
 import { saasProducts, type SaaSProduct } from '@/lib/saas-data'
 
@@ -14,72 +15,117 @@ interface SpaceSceneProps {
   targetPosition?: [number, number, number] | null
 }
 
-// Generate positions for planets in clusters by category
-function generatePlanetPositions(products: SaaSProduct[]) {
+// Generate orbit parameters for each planet
+function generateOrbitParameters(products: SaaSProduct[]) {
   const categories = [...new Set(products.map(p => p.category))]
-  const categoryAngles: Record<string, number> = {}
+  const categoryIndex: Record<string, number> = {}
+  const categoryCount: Record<string, number> = {}
   
-  // Assign angle sectors to categories
   categories.forEach((cat, i) => {
-    categoryAngles[cat] = (i / categories.length) * Math.PI * 2
+    categoryIndex[cat] = i
+    categoryCount[cat] = 0
   })
 
-  const positions: Record<string, [number, number, number]> = {}
-  const categoryCount: Record<string, number> = {}
+  const parameters: Record<string, {
+    orbitRadius: number
+    orbitSpeed: number
+    initialAngle: number
+    verticalOffset: number
+  }> = {}
 
   products.forEach((product) => {
-    const categoryAngle = categoryAngles[product.category]
-    const count = categoryCount[product.category] || 0
-    categoryCount[product.category] = count + 1
+    const catIdx = categoryIndex[product.category]
+    const countInCategory = categoryCount[product.category]
+    categoryCount[product.category] = countInCategory + 1
 
-    // Cluster products around their category angle
-    const angleOffset = (count * 0.4) - ((categoryCount[product.category] || 1) * 0.2)
-    const angle = categoryAngle + angleOffset
+    // Base orbit radius - Start beyond the sun (sun radius is 50)
+    // Start from 80 units and add 30 units spacing for each category tier
+    const categoryRadius = 80 + catIdx * 30
     
-    // Vary distance based on size and index
-    const baseDistance = 8 + count * 2
-    const distance = baseDistance + (product.size === 'large' ? -1 : product.size === 'small' ? 1 : 0)
-    
-    const x = Math.cos(angle) * distance
-    const z = Math.sin(angle) * distance
-    const y = (Math.random() - 0.5) * 4 // Vertical variation
+    // Within category, spread products along the orbit with significant radii variation
+    const radiusVariation = (countInCategory % 5 - 2) * 10
+    const orbitRadius = categoryRadius + radiusVariation
 
-    positions[product.id] = [x, y, z]
+    // Different speeds for more dynamic feel - outer orbits move slower
+    const baseSpeed = 0.04 / (1 + catIdx * 0.12)
+    const speedVariation = (Math.random() - 0.5) * 0.01
+    const orbitSpeed = baseSpeed + speedVariation
+
+    // Distribute initial angles - full 360 degrees with unique spacing per product
+    const goldenAngle = Math.PI * (3 - Math.sqrt(5)) // Golden angle for even distribution
+    const globalIndex = Object.keys(parameters).length
+    const initialAngle = globalIndex * goldenAngle + catIdx * 0.5
+
+    // Vertical distribution - more spread out
+    const verticalOffset = (Math.random() - 0.5) * 15
+
+    parameters[product.id] = {
+      orbitRadius,
+      orbitSpeed,
+      initialAngle,
+      verticalOffset
+    }
   })
 
-  return positions
+  return parameters
 }
 
-export function SpaceScene({ onSelectProduct, highlightedProductId, targetPosition }: SpaceSceneProps) {
-  const planetPositions = useMemo(() => generatePlanetPositions(saasProducts), [])
+// Calculate current position for camera targeting
+export function getPlanetPosition(productId: string, time: number = 0): [number, number, number] | null {
+  const parameters = generateOrbitParameters(saasProducts)
+  const params = parameters[productId]
+  if (!params) return null
+
+  const angle = params.initialAngle + params.orbitSpeed * time
+  const x = Math.cos(angle) * params.orbitRadius
+  const z = Math.sin(angle) * params.orbitRadius
+  const y = params.verticalOffset
+
+  return [x, y, z]
+}
+
+export function SpaceScene({ 
+  onSelectProduct, 
+  highlightedProductId, 
+  targetPosition
+}: SpaceSceneProps) {
+  const orbitParameters = useMemo(() => generateOrbitParameters(saasProducts), [])
 
   return (
     <div className="h-screen w-full">
       <Canvas
-        camera={{ position: [0, 5, 20], fov: 60 }}
+        camera={{ position: [0, 100, 280], fov: 60 }}
         gl={{ antialias: true, alpha: false }}
-        style={{ background: '#030308' }}
+        style={{ background: '#020205' }}
       >
         <Suspense fallback={null}>
-          {/* Ambient lighting */}
-          <ambientLight intensity={0.2} />
-          <pointLight position={[10, 10, 10]} intensity={0.5} />
-          <pointLight position={[-10, -10, -10]} intensity={0.3} color="#4488ff" />
+          {/* Ambient lighting - reduced since sun provides main light */}
+          <ambientLight intensity={0.15} />
 
           {/* Background elements */}
-          <Starfield count={6000} radius={80} />
-          <SpaceDust count={300} />
+          <Starfield count={12000} radius={600} />
+          <SpaceDust count={800} />
 
-          {/* Planets */}
-          {saasProducts.map((product) => (
-            <Planet
-              key={product.id}
-              product={product}
-              position={planetPositions[product.id]}
-              onClick={onSelectProduct}
-              isHighlighted={highlightedProductId === product.id}
-            />
-          ))}
+          {/* Central Sun */}
+          <Sun />
+
+          {/* Orbiting Planets */}
+          {saasProducts.map((product) => {
+            const params = orbitParameters[product.id]
+            
+            return (
+              <Planet
+                key={product.id}
+                product={product}
+                orbitRadius={params.orbitRadius}
+                orbitSpeed={params.orbitSpeed}
+                initialAngle={params.initialAngle}
+                verticalOffset={params.verticalOffset}
+                onClick={onSelectProduct}
+                isHighlighted={highlightedProductId === product.id}
+              />
+            )
+          })}
 
           {/* Camera controls */}
           <CameraController
@@ -92,10 +138,4 @@ export function SpaceScene({ onSelectProduct, highlightedProductId, targetPositi
       </Canvas>
     </div>
   )
-}
-
-// Helper to get planet position by product ID
-export function getPlanetPosition(productId: string): [number, number, number] | null {
-  const positions = generatePlanetPositions(saasProducts)
-  return positions[productId] || null
 }
